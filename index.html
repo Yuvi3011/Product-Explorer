@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopEase — Browse Products</title>
+  <meta name="description" content="Browse and shop from a wide range of products including electronics, clothing, and jewelry." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo">ShopEase</a>
+      <div class="nav__search">
+        <input type="text" id="searchInput" class="nav__search-input" placeholder="Search products..." autocomplete="off" />
+      </div>
+      <button class="nav__cart" id="cartBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span class="nav__cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Filters -->
+  <div class="toolbar">
+    <div class="toolbar__inner">
+      <div class="toolbar__cats" id="categoryFilters"></div>
+      <select id="sortSelect" class="toolbar__sort">
+        <option value="default">Sort by: Featured</option>
+        <option value="low">Price: Low to High</option>
+        <option value="high">Price: High to Low</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="content">
+    <p class="content__count" id="resultsCount">Showing <strong id="resultCount">0</strong> products</p>
+
+    <div class="loader" id="loader">
+      <div class="loader__spin"></div>
+      <p>Loading products...</p>
+    </div>
+
+    <div class="grid" id="productGrid"></div>
+
+    <div class="empty hidden" id="emptyState">
+      <p class="empty__title">No products found</p>
+      <p class="empty__text">Try a different search or category.</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 ShopEase &middot; Powered by Fake Store API</p>
+  </footer>
+
+  <!-- Cart Overlay -->
+  <div class="overlay hidden" id="cartOverlay"></div>
+
+  <!-- Cart Drawer -->
+  <aside class="drawer" id="cartDrawer">
+    <div class="drawer__head">
+      <h2>Cart</h2>
+      <button class="drawer__close" id="cartClose">&times;</button>
+    </div>
+    <div class="drawer__body" id="cartItems"></div>
+    <div class="drawer__empty hidden" id="cartEmpty">
+      <p>Your cart is empty.</p>
+    </div>
+    <div class="drawer__foot" id="cartFooter">
+      <div class="drawer__total">
+        <span>Subtotal (<span id="cartTotalQty">0</span>)</span>
+        <span class="drawer__price" id="cartSubtotal">₹0</span>
+      </div>
+      <button class="drawer__checkout" id="checkoutBtn">Checkout</button>
+      <button class="drawer__clear" id="clearCartBtn">Clear cart</button>
+    </div>
+  </aside>
+
+  <script src="script.js"></script>
+</body>
+</html>
