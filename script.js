@@ -32,19 +32,34 @@ const state = {
   cart: [],
 };
 
-const API_URL = 'https://fakestoreapi.com/products';
+const API_BASE = 'https://dummyjson.com/products';
+const CATEGORIES = [
+  'smartphones', 'laptops',
+  'mens-shirts', 'mens-shoes',
+  'womens-dresses', 'womens-shoes', 'womens-bags',
+  'tops', 'womens-jewellery', 'sunglasses',
+];
 const LS_KEYS = { category: 'pe-cat', sort: 'pe-sort', cart: 'pe-cart' };
 
-/* --- Pricing --- */
-const CATEGORY_MULTIPLIER = {
-  "electronics": 80,
-  "jewelery": 60,
-  "men's clothing": 70,
-  "women's clothing": 65,
+/* --- Clean category names --- */
+const CATEGORY_LABELS = {
+  'smartphones': 'Smartphones',
+  'laptops': 'Laptops',
+  'mens-shirts': "Men's Clothing",
+  'mens-shoes': "Men's Shoes",
+  'womens-dresses': "Women's Clothing",
+  'womens-shoes': "Women's Shoes",
+  'womens-bags': "Women's Bags",
+  'tops': "Women's Tops",
+  'womens-jewellery': 'Jewellery',
+  'sunglasses': 'Sunglasses',
 };
 
-const toINR = (usd, cat = '') => {
-  const raw = usd * (CATEGORY_MULTIPLIER[cat] || 75);
+const displayCategory = (cat) => CATEGORY_LABELS[cat] || cat;
+
+/* --- Pricing --- */
+const toINR = (usd) => {
+  const raw = usd * 85;
   if (raw < 500) return Math.round(raw / 50) * 50 - 1;
   if (raw < 2000) return Math.round(raw / 100) * 100 - 1;
   if (raw < 10000) return Math.round(raw / 500) * 500 - 1;
@@ -56,10 +71,20 @@ const formatINR = (n) => n.toLocaleString('en-IN');
 /* --- API --- */
 const fetchProducts = async () => {
   try {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error(res.status);
-    const data = await res.json();
-    return data.map((p) => ({ ...p, priceINR: toINR(p.price, p.category) }));
+    const requests = CATEGORIES.map((cat) =>
+      fetch(`${API_BASE}/category/${cat}`).then((r) => r.ok ? r.json() : { products: [] })
+    );
+    const results = await Promise.all(requests);
+    const all = results.flatMap((data) => data.products || []);
+    return all.map((p) => ({
+      id: p.id,
+      title: p.title,
+      price: p.price,
+      category: p.category,
+      image: p.thumbnail,
+      rating: { rate: p.rating, count: p.reviews ? p.reviews.length : 0 },
+      priceINR: toINR(p.price),
+    }));
   } catch (e) {
     console.error('Fetch failed:', e);
     return [];
@@ -87,7 +112,7 @@ const cardHTML = (p) => {
       <img class="card__img" src="${p.image}" alt="${p.title}" loading="lazy" />
     </div>
     <div class="card__body">
-      <span class="card__category">${p.category}</span>
+      <span class="card__category">${displayCategory(p.category)}</span>
       <h2 class="card__title">${p.title}</h2>
       <div class="card__rating">
         <span class="card__stars">${stars(p.rating.rate)}</span>
@@ -112,7 +137,7 @@ const renderProducts = (products) => {
 const renderCategories = (products) => {
   const cats = ['all', ...new Set(products.map((p) => p.category))];
   DOM.categoryFilters.innerHTML = cats
-    .map((c) => `<button class="cat-btn ${c === state.activeCategory ? 'active' : ''}" data-category="${c}">${c === 'all' ? 'All' : c}</button>`)
+    .map((c) => `<button class="cat-btn ${c === state.activeCategory ? 'active' : ''}" data-category="${c}">${c === 'all' ? 'All' : displayCategory(c)}</button>`)
     .join('');
 };
 
